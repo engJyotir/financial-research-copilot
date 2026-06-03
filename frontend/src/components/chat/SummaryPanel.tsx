@@ -1,4 +1,11 @@
-interface Props {
+import {
+    Card,
+    CardContent,
+  } from "@/components/ui/card";
+  
+  import MarkdownRenderer from "./MarkdownRenderer";
+  
+  interface Props {
     summary: string;
   }
   
@@ -6,16 +13,46 @@ interface Props {
     summary,
   }: Props) {
     return (
-      <div className="mb-8 rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
+      <Card
+        className="
+          border-zinc-800
+          bg-zinc-950
+          shadow-none
+        "
+      >
+        <CardContent className="p-10">
   
-        <h2 className="mb-4 text-xl font-semibold text-white">
-          Executive Summary
-        </h2>
+          {/* Header */}
   
-        <div className="whitespace-pre-wrap text-zinc-300">
-          {summary}
-        </div>
+          <div className="mb-10">
   
-      </div>
+            <p className="text-xs uppercase tracking-[0.28em] text-zinc-500">
+              Executive Briefing
+            </p>
+  
+            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white">
+              Executive Summary
+            </h2>
+  
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-500">
+              High-level overview of the selected document,
+              generated to help analysts quickly understand
+              key business, financial and investment insights.
+            </p>
+  
+          </div>
+  
+          {/* Divider */}
+  
+          <div className="mb-10 border-t border-zinc-800" />
+  
+          {/* Summary Content */}
+  
+          <MarkdownRenderer
+            content={summary}
+          />
+  
+        </CardContent>
+      </Card>
     );
   }

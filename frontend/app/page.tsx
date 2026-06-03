@@ -35,27 +35,39 @@ export default function Home() {
   }
 
   return (
-    <div className="grid grid-cols-4 h-screen">
-      <DocumentsSidebar
-        documents={documents}
-        selectedDocument={
-          selectedDocument
-        }
-        onSelect={
-          setSelectedDocument
-        }
-        onUploadSuccess={
-          loadDocuments
-        }
-      />
+    <main className="h-screen overflow-hidden bg-[#09090b]">
 
-      <div className="col-span-3">
-        <ChatPanel
+      <div className="flex h-full">
+
+        {/* Sidebar */}
+
+        <DocumentsSidebar
+          documents={documents}
           selectedDocument={
             selectedDocument
           }
+          onSelect={
+            setSelectedDocument
+          }
+          onUploadSuccess={
+            loadDocuments
+          }
         />
+
+        {/* Main Workspace */}
+
+        <div className="flex-1 overflow-hidden">
+
+          <ChatPanel
+            selectedDocument={
+              selectedDocument
+            }
+          />
+
+        </div>
+
       </div>
-    </div>
+
+    </main>
   );
 }

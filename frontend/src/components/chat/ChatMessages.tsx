@@ -23,9 +23,13 @@ export default function ChatMessages({
   }, [messages]);
 
   return (
-    <>
+    <div className="space-y-8">
+
       {messages.map(
-        (message, index) => (
+        (
+          message,
+          index
+        ) => (
           <MessageBubble
             key={index}
             message={message}
@@ -34,6 +38,7 @@ export default function ChatMessages({
       )}
 
       <div ref={bottomRef} />
-    </>
+
+    </div>
   );
 }

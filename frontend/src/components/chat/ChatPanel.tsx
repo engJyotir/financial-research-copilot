@@ -7,6 +7,7 @@ import MessageBubble from "./MessageBubble";
 import SummaryPanel from "./SummaryPanel";
 import CompanyIntelligencePanel from "./CompanyIntelligencePanel";
 import InvestmentMemoPanel from "./InvestmentMemoPanel";
+import FinancialDashboard from "./FinancialDashboard";
 
 import { Document } from "@/types/document";
 import { ChatMessage } from "@/types/chat";
@@ -23,9 +24,7 @@ interface Props {
 export default function ChatPanel({
   selectedDocument,
 }: Props) {
-
-  const [input, setInput] =
-    useState("");
+  const [input, setInput] = useState("");
 
   const [loading, setLoading] =
     useState(false);
@@ -48,24 +47,29 @@ export default function ChatPanel({
   const [investmentMemo, setInvestmentMemo] =
     useState("");
 
+  const [dashboardData] = useState({
+    revenue: "$9.6M",
+    netIncome: "$945K",
+    assets: "$13.0M",
+    recommendation: "BUY",
+  });
+
   const [messages, setMessages] =
     useState<ChatMessage[]>([
       {
         role: "assistant",
         content:
-          "Welcome to Financial Research Copilot.\n\nSelect a document from the sidebar and ask a question.",
+          "Welcome to Financial Research Copilot. Upload or select a financial document and begin your analysis.",
       },
     ]);
 
   async function handleGenerateSummary() {
-
     if (!selectedDocument) {
       alert("Select a document first.");
       return;
     }
 
     try {
-
       setSummaryLoading(true);
 
       const response =
@@ -73,34 +77,21 @@ export default function ChatPanel({
           selectedDocument.document_id
         );
 
-      setSummary(
-        response.summary
-      );
-
+      setSummary(response.summary);
     } catch (error) {
-
       console.error(error);
-
-      alert(
-        "Failed to generate summary."
-      );
-
     } finally {
-
       setSummaryLoading(false);
-
     }
   }
 
   async function handleFinancialAnalysis() {
-
     if (!selectedDocument) {
       alert("Select a document first.");
       return;
     }
 
     try {
-
       setAnalysisLoading(true);
 
       const response =
@@ -111,31 +102,20 @@ export default function ChatPanel({
       setCompanyAnalysis(
         response.analysis
       );
-
     } catch (error) {
-
       console.error(error);
-
-      alert(
-        "Failed to analyze document."
-      );
-
     } finally {
-
       setAnalysisLoading(false);
-
     }
   }
 
   async function handleGenerateInvestmentMemo() {
-
     if (!selectedDocument) {
       alert("Select a document first.");
       return;
     }
 
     try {
-
       setMemoLoading(true);
 
       const response =
@@ -146,28 +126,17 @@ export default function ChatPanel({
       setInvestmentMemo(
         response.memo
       );
-
     } catch (error) {
-
       console.error(error);
-
-      alert(
-        "Failed to generate investment memo."
-      );
-
     } finally {
-
       setMemoLoading(false);
-
     }
   }
 
   async function handleSend() {
-
     if (!input.trim()) return;
 
     if (!selectedDocument) {
-
       alert(
         "Please select a document first."
       );
@@ -188,7 +157,6 @@ export default function ChatPanel({
     setInput("");
 
     try {
-
       setLoading(true);
 
       const response =
@@ -205,9 +173,7 @@ export default function ChatPanel({
           sources: response.sources,
         },
       ]);
-
     } catch (error) {
-
       console.error(error);
 
       setMessages((prev) => [
@@ -215,75 +181,141 @@ export default function ChatPanel({
         {
           role: "assistant",
           content:
-            "Something went wrong while processing your request.",
+            "Unable to process request.",
         },
       ]);
-
     } finally {
-
       setLoading(false);
-
     }
   }
 
   return (
-    <div className="flex h-screen flex-col bg-black">
+    <div className="flex h-screen flex-col bg-[#09090b]">
 
-      <div className="border-b border-zinc-800 px-8 py-6">
+      {/* Top Header */}
+      <div className="border-b border-zinc-800 bg-[#09090b]">
 
-        <h1 className="text-5xl font-bold text-white">
-          Financial Research Copilot
-        </h1>
+        <div className="mx-auto max-w-7xl px-10 py-8">
 
-        <p className="mt-2 text-zinc-400">
-          {selectedDocument
-            ? selectedDocument.filename
-            : "No document selected"}
-        </p>
+          <p className="text-xs uppercase tracking-[0.28em] text-zinc-500">
+            Institutional Research Platform
+          </p>
 
-        {selectedDocument && (
+          <h1 className="mt-3 text-4xl font-semibold tracking-tight text-white">
+            Financial Research Copilot
+          </h1>
 
-          <div className="mt-6 flex flex-wrap gap-4">
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-500">
+            Analyze financial statements,
+            filings, investment reports and
+            research documents using AI.
+          </p>
 
-            <button
-              onClick={handleGenerateSummary}
-              disabled={summaryLoading}
-              className="rounded-xl bg-blue-600 px-6 py-3 text-white hover:bg-blue-700"
-            >
-              {summaryLoading
-                ? "Generating..."
-                : "Generate Executive Summary"}
-            </button>
+          {selectedDocument && (
+            <div className="mt-8 flex flex-wrap gap-3">
 
-            <button
-              onClick={handleFinancialAnalysis}
-              disabled={analysisLoading}
-              className="rounded-xl bg-green-600 px-6 py-3 text-white hover:bg-green-700"
-            >
-              {analysisLoading
-                ? "Analyzing..."
-                : "Analyze Financials"}
-            </button>
+              <button
+                onClick={
+                  handleGenerateSummary
+                }
+                disabled={
+                  summaryLoading
+                }
+                className="
+                  rounded-xl
+                  border
+                  border-zinc-700
+                  bg-zinc-900
+                  px-5
+                  py-3
+                  text-sm
+                  font-medium
+                  text-white
+                  transition
+                  hover:bg-zinc-800
+                "
+              >
+                {summaryLoading
+                  ? "Generating..."
+                  : "Executive Summary"}
+              </button>
 
-            <button
-              onClick={handleGenerateInvestmentMemo}
-              disabled={memoLoading}
-              className="rounded-xl bg-purple-600 px-6 py-3 text-white hover:bg-purple-700"
-            >
-              {memoLoading
-                ? "Generating..."
-                : "Generate Investment Memo"}
-            </button>
+              <button
+                onClick={
+                  handleFinancialAnalysis
+                }
+                disabled={
+                  analysisLoading
+                }
+                className="
+                  rounded-xl
+                  border
+                  border-zinc-700
+                  bg-zinc-900
+                  px-5
+                  py-3
+                  text-sm
+                  font-medium
+                  text-white
+                  transition
+                  hover:bg-zinc-800
+                "
+              >
+                {analysisLoading
+                  ? "Analyzing..."
+                  : "Financial Analysis"}
+              </button>
 
-          </div>
+              <button
+                onClick={
+                  handleGenerateInvestmentMemo
+                }
+                disabled={memoLoading}
+                className="
+                  rounded-xl
+                  border
+                  border-zinc-700
+                  bg-zinc-900
+                  px-5
+                  py-3
+                  text-sm
+                  font-medium
+                  text-white
+                  transition
+                  hover:bg-zinc-800
+                "
+              >
+                {memoLoading
+                  ? "Generating..."
+                  : "Investment Memo"}
+              </button>
 
-        )}
-
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-8">
+      {/* Main Workspace */}
+      <div className="flex-1 overflow-y-auto">
 
-        <div className="mx-auto max-w-6xl space-y-8">
+        <div className="mx-auto max-w-7xl space-y-8 px-10 py-8">
+
+          {companyAnalysis && (
+            <FinancialDashboard
+              revenue={
+                dashboardData.revenue
+              }
+              netIncome={
+                dashboardData.netIncome
+              }
+              assets={
+                dashboardData.assets
+              }
+              recommendation={
+                dashboardData.recommendation
+              }
+            />
+          )}
 
           {summary && (
             <SummaryPanel
@@ -293,7 +325,9 @@ export default function ChatPanel({
 
           {companyAnalysis && (
             <CompanyIntelligencePanel
-              analysis={companyAnalysis}
+              analysis={
+                companyAnalysis
+              }
             />
           )}
 
@@ -303,27 +337,46 @@ export default function ChatPanel({
             />
           )}
 
-          <div className="flex flex-col gap-6">
+          {/* Chat Section */}
 
-            {messages.map(
-              (
-                message,
-                index
-              ) => (
-                <MessageBubble
-                  key={index}
-                  message={message}
-                />
-              )
-            )}
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-950">
 
-            {loading && (
+            <div className="border-b border-zinc-800 px-6 py-5">
 
-              <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4 text-zinc-400">
-                Thinking...
+              <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">
+                Research Assistant
+              </p>
+
+              <h2 className="mt-2 text-xl font-semibold text-white">
+                Research Chat
+              </h2>
+            </div>
+
+            <div className="p-6">
+
+              <div className="flex flex-col gap-5">
+
+                {messages.map(
+                  (
+                    message,
+                    index
+                  ) => (
+                    <MessageBubble
+                      key={index}
+                      message={message}
+                    />
+                  )
+                )}
+
+                {loading && (
+                  <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-zinc-400">
+                    Thinking...
+                  </div>
+                )}
+
               </div>
 
-            )}
+            </div>
 
           </div>
 

@@ -1,71 +1,132 @@
-interface Props {
-    data: any;
+import {
+    Card,
+    CardContent,
+  } from "@/components/ui/card";
+  
+  interface Props {
+    revenue: string;
+    netIncome: string;
+    assets: string;
+    recommendation: string;
   }
   
-  export default function FinancialDashboard({ data }: Props) {
-    if (!data) {
-      return null;
-    }
-  
+  export default function FinancialDashboard({
+    revenue,
+    netIncome,
+    assets,
+    recommendation,
+  }: Props) {
     return (
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-8">
-        <h2 className="mb-8 text-4xl font-bold text-white">
-          Company Intelligence
-        </h2>
+      <div className="grid gap-4 md:grid-cols-4">
   
-        <div className="grid grid-cols-2 gap-6">
-          <div className="rounded-xl bg-zinc-800 p-6">
-            <h3 className="text-sm text-zinc-400">Revenue</h3>
-            <p className="mt-2 text-3xl font-bold text-green-400">
-              {data.revenue || "N/A"}
+        {/* Revenue */}
+  
+        <Card
+          className="
+            border-zinc-800
+            bg-zinc-950
+            transition
+            hover:border-zinc-700
+          "
+        >
+          <CardContent className="p-6">
+  
+            <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">
+              Revenue
             </p>
-          </div>
   
-          <div className="rounded-xl bg-zinc-800 p-6">
-            <h3 className="text-sm text-zinc-400">Net Income</h3>
-            <p className="mt-2 text-3xl font-bold text-blue-400">
-              {data.net_income || "N/A"}
+            <p className="mt-3 text-2xl font-semibold text-white">
+              {revenue}
             </p>
-          </div>
   
-          <div className="rounded-xl bg-zinc-800 p-6">
-            <h3 className="text-sm text-zinc-400">Sentiment</h3>
-            <p className="mt-2 text-2xl font-bold text-yellow-400">
-              {data.sentiment || "Neutral"}
+            <p className="mt-2 text-sm text-zinc-500">
+              Total reported revenue
             </p>
-          </div>
   
-          <div className="rounded-xl bg-zinc-800 p-6">
-            <h3 className="text-sm text-zinc-400">Recommendation</h3>
-            <p className="mt-2 text-2xl font-bold text-purple-400">
-              {data.recommendation || "HOLD"}
+          </CardContent>
+        </Card>
+  
+        {/* Net Income */}
+  
+        <Card
+          className="
+            border-zinc-800
+            bg-zinc-950
+            transition
+            hover:border-zinc-700
+          "
+        >
+          <CardContent className="p-6">
+  
+            <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">
+              Net Income
             </p>
-          </div>
-        </div>
   
-        <div className="mt-10">
-          <h3 className="mb-4 text-2xl font-semibold text-white">
-            Strengths
-          </h3>
+            <p className="mt-3 text-2xl font-semibold text-white">
+              {netIncome}
+            </p>
   
-          <ul className="space-y-2 text-zinc-300">
-            {(data.strengths || []).map((item: string, index: number) => (
-              <li key={index}>✓ {item}</li>
-            ))}
-          </ul>
-        </div>
+            <p className="mt-2 text-sm text-zinc-500">
+              Earnings after expenses
+            </p>
   
-        <div className="mt-10">
-          <h3 className="mb-4 text-2xl font-semibold text-white">
-            Risks
-          </h3>
+          </CardContent>
+        </Card>
   
-          <ul className="space-y-2 text-zinc-300">
-            {(data.risks || []).map((item: string, index: number) => (
-              <li key={index}>⚠ {item}</li>
-            ))}
-          </ul>
-        </div>
+        {/* Assets */}
+  
+        <Card
+          className="
+            border-zinc-800
+            bg-zinc-950
+            transition
+            hover:border-zinc-700
+          "
+        >
+          <CardContent className="p-6">
+  
+            <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">
+              Total Assets
+            </p>
+  
+            <p className="mt-3 text-2xl font-semibold text-white">
+              {assets}
+            </p>
+  
+            <p className="mt-2 text-sm text-zinc-500">
+              Assets identified by AI
+            </p>
+  
+          </CardContent>
+        </Card>
+  
+        {/* Recommendation */}
+  
+        <Card
+          className="
+            border-zinc-800
+            bg-zinc-950
+            transition
+            hover:border-zinc-700
+          "
+        >
+          <CardContent className="p-6">
+  
+            <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">
+              Recommendation
+            </p>
+  
+            <p className="mt-3 text-2xl font-semibold text-white">
+              {recommendation}
+            </p>
+  
+            <p className="mt-2 text-sm text-zinc-500">
+              Generated by AI analysis
+            </p>
+  
+          </CardContent>
+        </Card>
+  
       </div>
     );
   }
