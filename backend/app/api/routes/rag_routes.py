@@ -1,22 +1,20 @@
 import os
 import uuid
 
-from fastapi import APIRouter
-from fastapi import UploadFile
-from fastapi import File
-from fastapi import Form
+from fastapi import APIRouter, UploadFile, File, Form
 
 from app.rag.document_loader import DocumentLoader
 from app.rag.text_splitter import TextSplitter
-from app.services.vector_store_service import VectorStoreService
 from app.rag.qa_chain import QAChain
+from app.rag.summary_chain import SummaryChain
+from app.rag.investment_memo_chain import InvestmentMemoChain
+from app.rag.retriever import RetrieverService
 
-from app.services.document_registry import (
-    DocumentRegistry
-)
-
-from app.services.chat_service import (
-    ChatService
+from app.services.vector_store_service import VectorStoreService
+from app.services.document_registry import DocumentRegistry
+from app.services.chat_service import ChatService
+from app.services.financial_intelligence_service import (
+    FinancialIntelligenceService
 )
 
 router = APIRouter()
@@ -67,14 +65,10 @@ async def upload_pdf(
     )
 
     return {
-        "message":
-            "PDF uploaded and indexed successfully",
-        "document_id":
-            document_id,
-        "filename":
-            file.filename,
-        "chunks":
-            len(chunks)
+        "message": "PDF uploaded and indexed successfully",
+        "document_id": document_id,
+        "filename": file.filename,
+        "chunks": len(chunks)
     }
 
 
@@ -84,20 +78,17 @@ async def ask_question(
     question: str = Form(...)
 ):
 
-    # Save User Message
     ChatService.save_message(
         document_id=document_id,
         role="user",
         content=question
     )
 
-    # Get LLM Response
     response = QAChain.ask(
         question=question,
         document_id=document_id
     )
 
-    # Save Assistant Message
     ChatService.save_message(
         document_id=document_id,
         role="assistant",
@@ -116,16 +107,69 @@ async def get_documents():
     )
 
 
-@router.get(
-    "/chat-history/{document_id}"
-)
+@router.get("/chat-history/{document_id}")
 async def get_chat_history(
     document_id: str
 ):
 
     return (
-        ChatService
-        .get_messages(
+        ChatService.get_messages(
             document_id
+        )
+    )
+
+
+@router.post("/generate-summary")
+async def generate_summary(
+    document_id: str = Form(...)
+):
+
+    return (
+        SummaryChain.generate_summary(
+            document_id
+        )
+    )
+
+
+@router.post("/financial-analysis")
+async def financial_analysis(
+    document_id: str = Form(...)
+):
+
+    retriever = (
+        RetrieverService.get_retriever(
+            document_id
+        )
+    )
+
+    docs = retriever.invoke(
+        "Provide complete financial information"
+    )
+
+    context = "\n\n".join(
+        [
+            doc.page_content
+            for doc in docs
+        ]
+    )
+
+    analysis = (
+        FinancialIntelligenceService
+        .analyze(context)
+    )
+
+    return {
+        "analysis": analysis
+    }
+
+
+@router.post("/generate-investment-memo")
+async def generate_investment_memo(
+    document_id: str = Form(...)
+):
+
+    return (
+        InvestmentMemoChain.generate(
+            document_id=document_id
         )
     )

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from app.rag.retriever import RetrieverService
 from app.api.routes.rag_routes import router as rag_router
 
 
