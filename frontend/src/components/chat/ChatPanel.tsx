@@ -1,6 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 
 import ChatInput from "./ChatInput";
 import MessageBubble from "./MessageBubble";
@@ -16,6 +20,7 @@ import { askQuestion } from "@/services/ask-service";
 import { generateSummary } from "@/services/summary-service";
 import { getFinancialAnalysis } from "@/services/financial-analysis-service";
 import { generateInvestmentMemo } from "@/services/investment-memo-service";
+import { getChatHistory } from "@/services/chat-history-service";
 
 interface Props {
   selectedDocument: Document | null;
@@ -24,7 +29,8 @@ interface Props {
 export default function ChatPanel({
   selectedDocument,
 }: Props) {
-  const [input, setInput] = useState("");
+  const [input, setInput] =
+    useState("");
 
   const [loading, setLoading] =
     useState(false);
@@ -47,12 +53,13 @@ export default function ChatPanel({
   const [investmentMemo, setInvestmentMemo] =
     useState("");
 
-  const [dashboardData] = useState({
-    revenue: "$9.6M",
-    netIncome: "$945K",
-    assets: "$13.0M",
-    recommendation: "BUY",
-  });
+  const [dashboardData, setDashboardData] =
+    useState({
+      revenue: "Not Found",
+      netIncome: "Not Found",
+      assets: "Not Found",
+      equity: "Not Found",
+    });
 
   const [messages, setMessages] =
     useState<ChatMessage[]>([
@@ -62,6 +69,57 @@ export default function ChatPanel({
           "Welcome to Financial Research Copilot. Upload or select a financial document and begin your analysis.",
       },
     ]);
+
+  const chatBottomRef =
+    useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    async function loadChatHistory() {
+      if (!selectedDocument) return;
+
+      try {
+        const history =
+          await getChatHistory(
+            selectedDocument.document_id
+          );
+
+        if (
+          history &&
+          history.length > 0
+        ) {
+          setMessages(history);
+        } else {
+          setMessages([
+            {
+              role: "assistant",
+              content:
+                "Welcome to Financial Research Copilot. Upload or select a financial document and begin your analysis.",
+            },
+          ]);
+        }
+      } catch (error) {
+        console.error(error);
+
+        setMessages([
+          {
+            role: "assistant",
+            content:
+              "Welcome to Financial Research Copilot. Upload or select a financial document and begin your analysis.",
+          },
+        ]);
+      }
+    }
+
+    loadChatHistory();
+  }, [selectedDocument]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      chatBottomRef.current?.scrollIntoView({
+        behavior: "smooth",
+      });
+    }, 100);
+  }, [messages, loading]);
 
   async function handleGenerateSummary() {
     if (!selectedDocument) {
@@ -77,7 +135,9 @@ export default function ChatPanel({
           selectedDocument.document_id
         );
 
-      setSummary(response.summary);
+      setSummary(
+        response.summary
+      );
     } catch (error) {
       console.error(error);
     } finally {
@@ -102,6 +162,29 @@ export default function ChatPanel({
       setCompanyAnalysis(
         response.analysis
       );
+
+      if (
+        response.metrics
+      ) {
+        setDashboardData({
+          revenue:
+            response.metrics.revenue ??
+            "Not Found",
+
+          netIncome:
+            response.metrics.net_income ??
+            "Not Found",
+
+          assets:
+            response.metrics.assets ??
+            "Not Found",
+
+          equity:
+            response.metrics.equity ??
+            "Not Found",
+        });
+      }
+
     } catch (error) {
       console.error(error);
     } finally {
@@ -169,8 +252,10 @@ export default function ChatPanel({
         ...prev,
         {
           role: "assistant",
-          content: response.answer,
-          sources: response.sources,
+          content:
+            response.answer,
+          sources:
+            response.sources,
         },
       ]);
     } catch (error) {
@@ -192,7 +277,6 @@ export default function ChatPanel({
   return (
     <div className="flex h-screen flex-col bg-[#09090b]">
 
-      {/* Top Header */}
       <div className="border-b border-zinc-800 bg-[#09090b]">
 
         <div className="mx-auto max-w-7xl px-10 py-8">
@@ -270,7 +354,9 @@ export default function ChatPanel({
                 onClick={
                   handleGenerateInvestmentMemo
                 }
-                disabled={memoLoading}
+                disabled={
+                  memoLoading
+                }
                 className="
                   rounded-xl
                   border
@@ -295,7 +381,6 @@ export default function ChatPanel({
         </div>
       </div>
 
-      {/* Main Workspace */}
       <div className="flex-1 overflow-y-auto">
 
         <div className="mx-auto max-w-7xl space-y-8 px-10 py-8">
@@ -311,8 +396,8 @@ export default function ChatPanel({
               assets={
                 dashboardData.assets
               }
-              recommendation={
-                dashboardData.recommendation
+              equity={
+                dashboardData.equity
               }
             />
           )}
@@ -337,8 +422,6 @@ export default function ChatPanel({
             />
           )}
 
-          {/* Chat Section */}
-
           <div className="rounded-2xl border border-zinc-800 bg-zinc-950">
 
             <div className="border-b border-zinc-800 px-6 py-5">
@@ -350,9 +433,16 @@ export default function ChatPanel({
               <h2 className="mt-2 text-xl font-semibold text-white">
                 Research Chat
               </h2>
+
             </div>
 
-            <div className="p-6">
+            <div
+              className="
+                max-h-[600px]
+                overflow-y-auto
+                p-6
+              "
+            >
 
               <div className="flex flex-col gap-5">
 
@@ -373,6 +463,10 @@ export default function ChatPanel({
                     Thinking...
                   </div>
                 )}
+
+                <div
+                  ref={chatBottomRef}
+                />
 
               </div>
 

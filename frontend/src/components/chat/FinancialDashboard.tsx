@@ -1,132 +1,118 @@
 import {
-    Card,
-    CardContent,
-  } from "@/components/ui/card";
-  
-  interface Props {
-    revenue: string;
-    netIncome: string;
-    assets: string;
-    recommendation: string;
-  }
-  
-  export default function FinancialDashboard({
-    revenue,
-    netIncome,
-    assets,
-    recommendation,
-  }: Props) {
-    return (
-      <div className="grid gap-4 md:grid-cols-4">
-  
-        {/* Revenue */}
-  
+  Card,
+  CardContent,
+} from "@/components/ui/card";
+
+interface Props {
+  revenue: string;
+  netIncome: string;
+  assets: string;
+  equity: string;
+}
+
+export default function FinancialDashboard({
+  revenue,
+  netIncome,
+  assets,
+  equity,
+}: Props) {
+  const cards = [
+    {
+      label: "Revenue",
+      value: revenue,
+      description:
+        "Total reported revenue",
+    },
+    {
+      label: "Net Income",
+      value: netIncome,
+      description:
+        "Earnings after expenses",
+    },
+    {
+      label: "Assets",
+      value: assets,
+      description:
+        "Total reported assets",
+    },
+    {
+      label: "Equity",
+      value: equity,
+      description:
+        "Shareholder equity",
+    },
+  ];
+
+  return (
+    <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+      {cards.map((card) => (
         <Card
+          key={card.label}
           className="
+            group
+            overflow-hidden
+            border
             border-zinc-800
-            bg-zinc-950
-            transition
+            bg-gradient-to-b
+            from-zinc-950
+            to-zinc-900
+            transition-all
+            duration-300
             hover:border-zinc-700
+            hover:shadow-[0_0_40px_rgba(255,255,255,0.03)]
           "
         >
           <CardContent className="p-6">
-  
-            <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">
-              Revenue
+
+            <p
+              className="
+                text-[11px]
+                font-medium
+                uppercase
+                tracking-[0.24em]
+                text-zinc-500
+              "
+            >
+              {card.label}
             </p>
-  
-            <p className="mt-3 text-2xl font-semibold text-white">
-              {revenue}
+
+            <h3
+              className="
+                mt-4
+                text-3xl
+                font-semibold
+                tracking-tight
+                text-white
+              "
+            >
+              {card.value}
+            </h3>
+
+            <div
+              className="
+                mt-4
+                h-px
+                bg-gradient-to-r
+                from-zinc-800
+                via-zinc-700
+                to-transparent
+              "
+            />
+
+            <p
+              className="
+                mt-4
+                text-sm
+                leading-6
+                text-zinc-500
+              "
+            >
+              {card.description}
             </p>
-  
-            <p className="mt-2 text-sm text-zinc-500">
-              Total reported revenue
-            </p>
-  
+
           </CardContent>
         </Card>
-  
-        {/* Net Income */}
-  
-        <Card
-          className="
-            border-zinc-800
-            bg-zinc-950
-            transition
-            hover:border-zinc-700
-          "
-        >
-          <CardContent className="p-6">
-  
-            <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">
-              Net Income
-            </p>
-  
-            <p className="mt-3 text-2xl font-semibold text-white">
-              {netIncome}
-            </p>
-  
-            <p className="mt-2 text-sm text-zinc-500">
-              Earnings after expenses
-            </p>
-  
-          </CardContent>
-        </Card>
-  
-        {/* Assets */}
-  
-        <Card
-          className="
-            border-zinc-800
-            bg-zinc-950
-            transition
-            hover:border-zinc-700
-          "
-        >
-          <CardContent className="p-6">
-  
-            <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">
-              Total Assets
-            </p>
-  
-            <p className="mt-3 text-2xl font-semibold text-white">
-              {assets}
-            </p>
-  
-            <p className="mt-2 text-sm text-zinc-500">
-              Assets identified by AI
-            </p>
-  
-          </CardContent>
-        </Card>
-  
-        {/* Recommendation */}
-  
-        <Card
-          className="
-            border-zinc-800
-            bg-zinc-950
-            transition
-            hover:border-zinc-700
-          "
-        >
-          <CardContent className="p-6">
-  
-            <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">
-              Recommendation
-            </p>
-  
-            <p className="mt-3 text-2xl font-semibold text-white">
-              {recommendation}
-            </p>
-  
-            <p className="mt-2 text-sm text-zinc-500">
-              Generated by AI analysis
-            </p>
-  
-          </CardContent>
-        </Card>
-  
-      </div>
-    );
-  }
+      ))}
+    </div>
+  );
+}
