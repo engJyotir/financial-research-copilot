@@ -1,4 +1,4 @@
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
 
 class EmbeddingService:
@@ -6,8 +6,8 @@ class EmbeddingService:
     @staticmethod
     def get_embeddings():
 
-        embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2"
+        embeddings = OpenAIEmbeddings(
+            model="text-embedding-3-small"
         )
 
         return embeddings
