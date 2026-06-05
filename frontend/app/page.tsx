@@ -8,7 +8,7 @@ import ChatPanel from "@/components/chat/ChatPanel";
 import { Document } from "@/types/document";
 
 import { getDocuments } from "@/services/document-service";
-
+console.log("NEXT_PUBLIC_API_URL =", process.env.NEXT_PUBLIC_API_URL);
 export default function Home() {
   const [documents, setDocuments] =
     useState<Document[]>([]);
