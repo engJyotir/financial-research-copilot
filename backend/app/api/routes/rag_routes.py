@@ -153,13 +153,19 @@ async def financial_analysis(
         ]
     )
 
+    metrics = (
+        FinancialIntelligenceService
+        .extract_metrics(context)
+    )
+
     analysis = (
         FinancialIntelligenceService
         .analyze(context)
     )
 
     return {
-        "analysis": analysis
+        "analysis": analysis,
+        "metrics": metrics
     }
 
 

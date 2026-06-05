@@ -6,6 +6,15 @@ from app.services.llm_service import LLMService
 class FinancialIntelligenceService:
 
     @staticmethod
+    def format_number(value):
+
+        try:
+            cleaned = value.replace(",", "")
+            return f"${int(cleaned):,}"
+        except:
+            return value
+
+    @staticmethod
     def extract_metrics(text: str):
 
         revenue_matches = re.findall(
@@ -40,27 +49,37 @@ class FinancialIntelligenceService:
 
         return {
             "revenue":
-                revenue_matches[0]
+                FinancialIntelligenceService.format_number(
+                    revenue_matches[0]
+                )
                 if revenue_matches
                 else "Not Found",
 
             "net_income":
-                income_matches[0]
+                FinancialIntelligenceService.format_number(
+                    income_matches[0]
+                )
                 if income_matches
                 else "Not Found",
 
             "assets":
-                asset_matches[0]
+                FinancialIntelligenceService.format_number(
+                    asset_matches[0]
+                )
                 if asset_matches
                 else "Not Found",
 
             "liabilities":
-                liability_matches[0]
+                FinancialIntelligenceService.format_number(
+                    liability_matches[0]
+                )
                 if liability_matches
                 else "Not Found",
 
             "equity":
-                equity_matches[0]
+                FinancialIntelligenceService.format_number(
+                    equity_matches[0]
+                )
                 if equity_matches
                 else "Not Found",
         }
@@ -136,15 +155,5 @@ Return VALID MARKDOWN.
         llm = LLMService.get_llm()
 
         response = llm.invoke(prompt)
-
-        print(
-            "\n\n========== COMPANY INTELLIGENCE =========="
-        )
-
-        print(response.content)
-
-        print(
-            "=========================================\n\n"
-        )
 
         return response.content
